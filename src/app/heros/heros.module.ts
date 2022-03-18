@@ -14,6 +14,8 @@ import { StoreModule } from '@ngrx/store';
 import { createHeroEffect } from '../store/effects/hero.effect';
 import { reducers } from '../store/reducers/hero.reducers';
 
+import { HighchartsChartModule } from 'highcharts-angular';
+
 const routes: Routes = [
   {
     path: '',
@@ -29,6 +31,7 @@ const routes: Routes = [
     MatSortModule,
     MatPaginatorModule,
     MatButtonModule,
+    HighchartsChartModule,
     CommonModule,
     RouterModule.forChild(routes),
     StoreModule.forFeature('hero', reducers),

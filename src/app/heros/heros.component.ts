@@ -4,11 +4,25 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { HerosService } from '../shared/types/service/heros.service';
 import { HeroInterface } from '../shared/types/interfaces/hero';
 import { Store } from '@ngrx/store';
 import { deleteHeroAction, getAllHerosAction, getHeroByIdAction } from '../store/actions/hero.action';
 import { allHerosSelector } from '../store/selectors/hero.selectors';
+
+import * as Highcharts from 'highcharts';
+
+interface HeroSeries {
+  name: string;
+  data: number[];
+}
+
+enum HeroType {
+  WIZARD = 'Wizard',
+  WARIOR = 'Warior',
+  ARCHER = 'Archer',
+  NECROMANCER = 'Necromancer',
+  ASSASIN = 'Assasin'
+}
 
 @Component({
   selector: 'app-heros',
@@ -16,8 +30,16 @@ import { allHerosSelector } from '../store/selectors/hero.selectors';
   styleUrls: ['./heros.component.scss']
 })
 export class HerosComponent implements OnInit, AfterViewInit, OnDestroy {
+  title = 'myHighchart';
+
+  data: HeroSeries[] = [];
+
+  highcharts = Highcharts;
+  chartOptions: any;
+
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+
   allHeros$ = this.store.select(allHerosSelector);
   deleteError: string;
   deleteId: number;
@@ -38,6 +60,8 @@ export class HerosComponent implements OnInit, AfterViewInit, OnDestroy {
       this.allHeros = heros;
       this.dataSource = new MatTableDataSource<HeroInterface>(this.allHeros);
     });
+
+    this.getSeries();
   }
 
   ngAfterViewInit() {
@@ -72,6 +96,41 @@ export class HerosComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteHero(id: number) {
     this.store.dispatch(deleteHeroAction({ id: id }));
     this.store.dispatch(getAllHerosAction());
+  }
+
+  getSeries() {
+    this.allHerosSubscription = this.allHeros$.subscribe((heros: HeroInterface[]) => {
+      const categories: string[] = ["Wizard", "Warior", "Archer", "Necromancer", "Assasin"];
+      this.allHeros = heros;
+      if (heros) {
+        const totalByTypes = heros.map(hero => hero.type).reduce((map, type) => ({
+          ...map,
+          [type]: (map[type] || 0) + 1,
+        }), {});
+        this.data = [{
+          name: 'Heros',
+          data: categories.map(item => totalByTypes[item])
+        }];
+
+        this.chartOptions = {
+          chart: {
+            type: "column"
+          },
+          title: {
+            text: "Count of Dota 2 Heros by type"
+          },
+          xAxis: {
+            categories: categories
+          },
+          yAxis: {
+            title: {
+              text: "Count by type"
+            }
+          },
+          series: this.data
+        };
+      }
+    });
   }
 
 }

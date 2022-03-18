@@ -37,8 +37,6 @@ const heroReducer = createReducer(
     on(
         getHeroByIdSuccessAction,
         (state, action): HeroStateInterface => {
-            const allHeros = state.allHeros;
-
             return {
                 ...state,
                 selectedHero: action.hero
