@@ -1,0 +1,60 @@
+<div class="hero-form">
+<h4 *ngIf="operation==='create'">Input new Hero</h4>
+<h4 *ngIf="operation==='edit'">Update hero data</h4>
+<form novalidate (ngSubmit)='onSubmit(heroForm)' #heroForm="ngForm">
+    <p>
+    <mat-form-field appearance="outline">
+        <mat-label>Hero ID</mat-label>
+        <input matInput
+        name="id"
+        [(ngModel)]='hero.id'
+        ngModel #id_hero = 'ngModel'
+        required
+        >
+        <mat-error *ngIf="id_hero.invalid">Enter hero ID !!!</mat-error>
+    </mat-form-field>
+    </p>
+    <p>
+    <mat-form-field appearance="outline">
+        <mat-label>Hero name</mat-label>
+        <input matInput
+        name="name"
+        [(ngModel)]='hero.name'
+        ngModel #name = 'ngModel'
+        required
+        >
+        <mat-error *ngIf="name.invalid">Enter hero NAME !!!</mat-error>
+    </mat-form-field>
+    </p>
+    <p>
+    <mat-form-field appearance="outline">
+        <mat-label>Localized name</mat-label>
+        <input matInput
+        name="localized_name"
+        [(ngModel)]='hero.localized_name'
+        ngModel #localized_name = 'ngModel'
+        required
+        >
+        <mat-error *ngIf="localized_name.invalid">Enter hero LOCALIZE NAME !!!</mat-error>
+    </mat-form-field>
+    </p>
+    <p>
+    <mat-form-field appearance="outline">
+        <mat-label>Type</mat-label>
+        <input matInput
+        name="type"
+        [(ngModel)]='hero.type'
+        ngModel #type = 'ngModel'
+        required
+        >
+        <mat-error *ngIf="type.invalid">Enter hero TYPE !!!</mat-error>
+    </mat-form-field>
+    </p>
+    <button type='submit' class="btn btn-success" [disabled]='heroForm.invalid'>
+        <ng-container *ngIf="operation==='create'; else update">
+            Create
+        </ng-container>
+        <ng-template #update>Update</ng-template>
+    </button>
+</form>
+</div>
